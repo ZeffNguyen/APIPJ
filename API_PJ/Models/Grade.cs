@@ -7,27 +7,33 @@
     public class Grade
     {
         [Key]
+        [Column("grade_Id")]
         public Guid GradeId { get; set; } = Guid.NewGuid();
 
         [Required]
         [MaxLength(10)]
+        [Column("school_year")]
         public string? SchoolYear { get; set; }
 
         [Required]
-        [EnumDataType(typeof(SemesterEnum))]
-        public SemesterEnum Semester { get; set; }
+        [Column("semester")]
+        public string? Semester { get; set; }
 
         [Required]
-        [EnumDataType(typeof(TestTypeEnum))]
-        public TestTypeEnum TestType { get; set; }
+        [Column("test_type")]
+        public string? TestType { get; set; }
+
 
         [Range(0, 10)]
-        public float Score { get; set; }
+        [Column("score")]
+        public double Score { get; set; }
 
         [Required]
+        [Column("student_Id")]
         public Guid StudentId { get; set; }
 
         [Required]
+        [Column("subject_Id")]
         public Guid? SubjectId { get; set; }
 
         [ForeignKey("StudentId")]

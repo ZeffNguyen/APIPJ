@@ -12,47 +12,47 @@ namespace API_PJ.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubjectsController : ControllerBase
+    public class AdminsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public SubjectsController(ApplicationDbContext context)
+        public AdminsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Subjects
+        // GET: api/Admins
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subject>>> GetSubjects()
+        public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins()
         {
-            return await _context.Subjects.ToListAsync();
+            return await _context.Admins.ToListAsync();
         }
 
-        // GET: api/Subjects/5
+        // GET: api/Admins/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subject>> GetSubject(Guid id)
+        public async Task<ActionResult<Admin>> GetAdmin(Guid id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
+            var admin = await _context.Admins.FindAsync(id);
 
-            if (subject == null)
+            if (admin == null)
             {
                 return NotFound();
             }
 
-            return subject;
+            return admin;
         }
 
-        // PUT: api/Subjects/5
-
+        // PUT: api/Admins/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubject(Guid id, Subject subject)
+        public async Task<IActionResult> PutAdmin(Guid id, Admin admin)
         {
-            if (id != subject.SubjectId)
+            if (id != admin.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(subject).State = EntityState.Modified;
+            _context.Entry(admin).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace API_PJ.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubjectExists(id))
+                if (!AdminExists(id))
                 {
                     return NotFound();
                 }
@@ -73,36 +73,36 @@ namespace API_PJ.Controllers
             return NoContent();
         }
 
-        // POST: api/Subjects
+        // POST: api/Admins
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Subject>> PostSubject(Subject subject)
+        public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
         {
-            _context.Subjects.Add(subject);
+            _context.Admins.Add(admin);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSubject", new { id = subject.SubjectId }, subject);
+            return CreatedAtAction("GetAdmin", new { id = admin.Id }, admin);
         }
 
-        // DELETE: api/Subjects/5
+        // DELETE: api/Admins/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubject(Guid id)
+        public async Task<IActionResult> DeleteAdmin(Guid id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
-            if (subject == null)
+            var admin = await _context.Admins.FindAsync(id);
+            if (admin == null)
             {
                 return NotFound();
             }
 
-            _context.Subjects.Remove(subject);
+            _context.Admins.Remove(admin);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool SubjectExists(Guid id)
+        private bool AdminExists(Guid id)
         {
-            return _context.Subjects.Any(e => e.SubjectId == id);
+            return _context.Admins.Any(e => e.Id == id);
         }
     }
 }

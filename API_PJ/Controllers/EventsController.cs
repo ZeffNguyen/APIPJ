@@ -12,47 +12,47 @@ namespace API_PJ.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubjectsController : ControllerBase
+    public class EventsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public SubjectsController(ApplicationDbContext context)
+        public EventsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Subjects
+        // GET: api/Events
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subject>>> GetSubjects()
+        public async Task<ActionResult<IEnumerable<Event>>> GetEvents()
         {
-            return await _context.Subjects.ToListAsync();
+            return await _context.Events.ToListAsync();
         }
 
-        // GET: api/Subjects/5
+        // GET: api/Events/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subject>> GetSubject(Guid id)
+        public async Task<ActionResult<Event>> GetEvent(Guid id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
+            var @event = await _context.Events.FindAsync(id);
 
-            if (subject == null)
+            if (@event == null)
             {
                 return NotFound();
             }
 
-            return subject;
+            return @event;
         }
 
-        // PUT: api/Subjects/5
-
+        // PUT: api/Events/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubject(Guid id, Subject subject)
+        public async Task<IActionResult> PutEvent(Guid id, Event @event)
         {
-            if (id != subject.SubjectId)
+            if (id != @event.EventId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(subject).State = EntityState.Modified;
+            _context.Entry(@event).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace API_PJ.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubjectExists(id))
+                if (!EventExists(id))
                 {
                     return NotFound();
                 }
@@ -73,36 +73,36 @@ namespace API_PJ.Controllers
             return NoContent();
         }
 
-        // POST: api/Subjects
+        // POST: api/Events
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Subject>> PostSubject(Subject subject)
+        public async Task<ActionResult<Event>> PostEvent(Event @event)
         {
-            _context.Subjects.Add(subject);
+            _context.Events.Add(@event);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSubject", new { id = subject.SubjectId }, subject);
+            return CreatedAtAction("GetEvent", new { id = @event.EventId }, @event);
         }
 
-        // DELETE: api/Subjects/5
+        // DELETE: api/Events/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubject(Guid id)
+        public async Task<IActionResult> DeleteEvent(Guid id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
-            if (subject == null)
+            var @event = await _context.Events.FindAsync(id);
+            if (@event == null)
             {
                 return NotFound();
             }
 
-            _context.Subjects.Remove(subject);
+            _context.Events.Remove(@event);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool SubjectExists(Guid id)
+        private bool EventExists(Guid id)
         {
-            return _context.Subjects.Any(e => e.SubjectId == id);
+            return _context.Events.Any(e => e.EventId == id);
         }
     }
 }

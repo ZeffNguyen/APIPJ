@@ -1,10 +1,8 @@
 ﻿using API_PJ.Models;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace API_PJ.Data
 {
-    
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
@@ -24,6 +22,18 @@ namespace API_PJ.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Ánh xạ tên bảng chính xác
+            modelBuilder.Entity<Admin>().ToTable("ADMIN");
+            modelBuilder.Entity<Class>().ToTable("CLASSES");
+            modelBuilder.Entity<Event>().ToTable("EVENTS");
+            modelBuilder.Entity<Grade>().ToTable("GRADES");
+            modelBuilder.Entity<Notification>().ToTable("NOTIFICATIONS");
+            modelBuilder.Entity<ReportCard>().ToTable("REPORT_CARDS");
+            modelBuilder.Entity<Schedule>().ToTable("SCHEDULES");
+            modelBuilder.Entity<Student>().ToTable("STUDENTS");
+            modelBuilder.Entity<Subject>().ToTable("SUBJECTS");
+            modelBuilder.Entity<Teacher>().ToTable("TEACHERS");
 
             // Khóa ngoại giữa Student và Class
             modelBuilder.Entity<Student>()
