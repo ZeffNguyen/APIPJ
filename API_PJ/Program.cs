@@ -1,7 +1,5 @@
-﻿
-using API_PJ.Data;
+﻿using API_PJ.Data;
 using Microsoft.EntityFrameworkCore;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,19 +14,23 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+// Cấu hình CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        polivy => 
-        polivy.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
+    options.AddPolicy("AllowAll", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader());
 });
 
-
 var app = builder.Build();
-app.UseHttpsRedirection();
 
+// Chỉ bật HTTPS Redirection khi chạy local
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 // Cấu hình HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -36,12 +38,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Bật CORS
 app.UseCors("AllowAll");
 
-
-app.UseHttpsRedirection();
-
+// Bật Authorization
 app.UseAuthorization();
+
+// Đọc PORT từ biến môi trường (Render yêu cầu)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.MapControllers();
 
