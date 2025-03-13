@@ -25,18 +25,46 @@ namespace API_PJ.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Class>>> GetClasses()
         {
-            return await _context.Classes
-                .Include(c => c.MainTeacher) // Load thông tin giáo viên chính
-                .ToListAsync();
+            return await _context.Classes.ToListAsync();
         }
+
+        [HttpGet("get-by-teacher/{teacherId}")]
+        public async Task<ActionResult<IEnumerable<Class>>> GetClassesByTeacher(Guid teacherId)
+        {
+            var classes = await _context.Classes
+                                        .Where(c => c.MainTeacherId == teacherId)
+                                        .ToListAsync();
+
+            if (!classes.Any())
+            {
+                return NotFound("No classes found for this teacher.");
+            }
+
+            return Ok(classes);
+        }
+
+        [HttpGet("get-id-by-name/{className}")]
+        public async Task<ActionResult<Guid>> GetClassIdByName(string className)
+        {
+            var classEntity = await _context.Classes
+                                            .Where(c => EF.Functions.Like(c.ClassName, className))
+                                            .Select(c => c.ClassId)
+                                            .FirstOrDefaultAsync();
+
+            if (classEntity == Guid.Empty)
+            {
+                return NotFound("Class not found");
+            }
+
+            return Ok(classEntity);
+        }
+
 
         // GET: api/Classes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Class>> GetClass(Guid id)
         {
-            var @class = await _context.Classes
-                .Include(c => c.MainTeacher) // Load thông tin giáo viên chính
-                .FirstOrDefaultAsync(c => c.ClassId == id);
+            var @class = await _context.Classes.FirstOrDefaultAsync(c => c.ClassId == id);
 
             if (@class == null)
             {
@@ -45,6 +73,7 @@ namespace API_PJ.Controllers
 
             return @class;
         }
+
 
 
         // PUT: api/Classes/5

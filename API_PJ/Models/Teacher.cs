@@ -31,8 +31,6 @@
         [Column("subject_Id")]
         public Guid SubjectId { get; set; }
 
-        [ForeignKey("SubjectId")]
-        public Subject? Subject { get; set; }
     }
 
 }

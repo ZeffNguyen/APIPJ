@@ -25,18 +25,33 @@ namespace API_PJ.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
-            return await _context.Students
-                .Include(s => s.Class) // Load thông tin lớp học
-                .ToListAsync();
+            // Chỉ trả về dữ liệu của Student, không include thông tin Class
+            return await _context.Students.ToListAsync();
         }
+
+        [HttpGet("get-id-by-name/{name}")]
+        public async Task<ActionResult<Guid>> GetSubjectIdByName(string name)
+        {
+            var subject = await _context.Subjects
+                                        .Where(s => EF.Functions.Like(s.SubjectName, name))
+                                        .Select(s => s.SubjectId)
+                                        .FirstOrDefaultAsync();
+
+            if (subject == Guid.Empty)
+            {
+                return NotFound("Subject not found");
+            }
+
+            return Ok(subject);
+        }
+
 
         // GET: api/Students/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Student>> GetStudent(Guid id)
         {
-            var student = await _context.Students
-                .Include(s => s.Class) // Load thông tin lớp học
-                .FirstOrDefaultAsync(s => s.StudentId == id);
+            // Chỉ lấy Student theo id mà không include thông tin Class
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.StudentId == id);
 
             if (student == null)
             {
@@ -79,7 +94,6 @@ namespace API_PJ.Controllers
         }
 
         // POST: api/Students
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Student>> PostStudent(Student student)
         {
@@ -88,6 +102,7 @@ namespace API_PJ.Controllers
 
             return CreatedAtAction("GetStudent", new { id = student.StudentId }, student);
         }
+
 
         // DELETE: api/Students/5
         [HttpDelete("{id}")]

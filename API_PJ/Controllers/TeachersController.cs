@@ -26,16 +26,33 @@ namespace API_PJ.Controllers
         public async Task<ActionResult<IEnumerable<Teacher>>> GetTeachers()
         {
             return await _context.Teachers
-                .Include(t => t.Subject) // Load thông tin môn học
+                
                 .ToListAsync();
         }
+
+        [HttpGet("get-id-by-name/{name}")]
+        public async Task<ActionResult<Guid>> GetTeacherIdByName(string name)
+        {
+            var teacher = await _context.Teachers
+                                        .Where(t => EF.Functions.Like(t.FullName, name))
+                                        .Select(t => t.TeacherId)
+                                        .FirstOrDefaultAsync();
+
+            if (teacher == Guid.Empty)
+            {
+                return NotFound("Teacher not found");
+            }
+
+            return Ok(teacher);
+        }
+
 
         // GET: api/Teachers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Teacher>> GetTeacher(Guid id)
         {
             var teacher = await _context.Teachers
-                .Include(t => t.Subject) // Load thông tin môn học
+                
                 .FirstOrDefaultAsync(t => t.TeacherId == id);
 
             if (teacher == null)

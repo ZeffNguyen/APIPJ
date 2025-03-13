@@ -23,8 +23,7 @@
         [Column("event_Id")]
         public Guid EventId { get; set; }
 
-        [ForeignKey("EventId")]
-        public Event? Event { get; set; }
+        
     }
 
 }

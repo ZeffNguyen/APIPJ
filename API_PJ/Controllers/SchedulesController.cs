@@ -99,6 +99,69 @@ namespace API_PJ.Controllers
 
             return NoContent();
         }
+        [HttpGet("get-id-by-room/{room}")]
+        public async Task<ActionResult<Guid>> GetScheduleIdByRoom(string room)
+        {
+            var schedule = await _context.Schedules
+                                         .Where(s => EF.Functions.Like(s.Room, room))
+                                         .Select(s => s.ScheduleId)
+                                         .FirstOrDefaultAsync();
+
+            if (schedule == Guid.Empty)
+            {
+                return NotFound("Schedule not found");
+            }
+
+            return Ok(schedule);
+        }
+
+        [HttpGet("get-id-by-class/{classId}")]
+        public async Task<ActionResult<Guid>> GetScheduleIdByClass(Guid classId)
+        {
+            var schedule = await _context.Schedules
+                                         .Where(s => s.ClassId == classId)
+                                         .Select(s => s.ScheduleId)
+                                         .FirstOrDefaultAsync();
+
+            if (schedule == Guid.Empty)
+            {
+                return NotFound("Schedule not found");
+            }
+
+            return Ok(schedule);
+        }
+
+        [HttpGet("get-id-by-subject/{subjectId}")]
+        public async Task<ActionResult<Guid>> GetScheduleIdBySubject(Guid subjectId)
+        {
+            var schedule = await _context.Schedules
+                                         .Where(s => s.SubjectId == subjectId)
+                                         .Select(s => s.ScheduleId)
+                                         .FirstOrDefaultAsync();
+
+            if (schedule == Guid.Empty)
+            {
+                return NotFound("Schedule not found");
+            }
+
+            return Ok(schedule);
+        }
+
+        [HttpGet("get-id-by-teacher/{teacherId}")]
+        public async Task<ActionResult<Guid>> GetScheduleIdByTeacher(Guid teacherId)
+        {
+            var schedule = await _context.Schedules
+                                         .Where(s => s.TeacherId == teacherId)
+                                         .Select(s => s.ScheduleId)
+                                         .FirstOrDefaultAsync();
+
+            if (schedule == Guid.Empty)
+            {
+                return NotFound("Schedule not found");
+            }
+
+            return Ok(schedule);
+        }
 
         private bool ScheduleExists(Guid id)
         {

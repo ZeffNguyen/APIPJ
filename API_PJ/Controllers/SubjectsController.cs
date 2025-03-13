@@ -28,6 +28,22 @@ namespace API_PJ.Controllers
             return await _context.Subjects.ToListAsync();
         }
 
+        [HttpGet("get-id-by-name/{name}")]
+        public async Task<ActionResult<Guid>> GetSubjectIdByName(string name)
+        {
+            var subject = await _context.Subjects
+                                        .Where(s => s.SubjectName == name)
+                                        .Select(s => s.SubjectId)
+                                        .FirstOrDefaultAsync();
+
+            if (subject == Guid.Empty)
+            {
+                return NotFound("Subject not found");
+            }
+
+            return Ok(subject);
+        }
+
         // GET: api/Subjects/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Subject>> GetSubject(Guid id)

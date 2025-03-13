@@ -30,8 +30,7 @@
         [Column("class_Id")]
         public Guid ClassId { get; set; }
 
-        [ForeignKey("ClassId")]
-        public Class? Class { get; set; }
+       
     }
 
 }

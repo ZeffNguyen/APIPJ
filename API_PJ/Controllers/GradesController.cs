@@ -25,20 +25,14 @@ namespace API_PJ.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Grade>>> GetGrades()
         {
-            return await _context.Grades
-                .Include(g => g.Student) // Load thông tin học sinh
-                .Include(g => g.Subject) // Load thông tin môn học
-                .ToListAsync();
+            return await _context.Grades.ToListAsync();
         }
 
         // GET: api/Grades/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Grade>> GetGrade(Guid id)
         {
-            var grade = await _context.Grades
-                .Include(g => g.Student) // Load thông tin học sinh
-                .Include(g => g.Subject) // Load thông tin môn học
-                .FirstOrDefaultAsync(g => g.GradeId == id);
+            var grade = await _context.Grades.FindAsync(id);
 
             if (grade == null)
             {
@@ -47,7 +41,6 @@ namespace API_PJ.Controllers
 
             return grade;
         }
-
 
         // PUT: api/Grades/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

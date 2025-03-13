@@ -16,9 +16,19 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        polivy => 
+        polivy.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+});
+
 
 var app = builder.Build();
 app.UseHttpsRedirection();
+
 
 // Cấu hình HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -26,6 +36,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowAll");
+
 
 app.UseHttpsRedirection();
 

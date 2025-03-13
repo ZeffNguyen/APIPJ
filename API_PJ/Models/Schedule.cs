@@ -37,14 +37,7 @@
         [Column("teacher_Id")]
         public Guid TeacherId { get; set; }
 
-        [ForeignKey("ClassId")]
-        public Class? Class { get; set; }
-
-        [ForeignKey("SubjectId")]
-        public Subject? Subject { get; set; }
-
-        [ForeignKey("TeacherId")]
-        public Teacher? Teacher { get; set; }
+       
     }
 
 }

@@ -14,7 +14,6 @@ namespace API_PJ.Data
         public DbSet<Class> Classes { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Grade> Grades { get; set; }
-        public DbSet<ReportCard> ReportCards { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Admin> Admins { get; set; }
@@ -29,81 +28,64 @@ namespace API_PJ.Data
             modelBuilder.Entity<Event>().ToTable("EVENTS");
             modelBuilder.Entity<Grade>().ToTable("GRADES");
             modelBuilder.Entity<Notification>().ToTable("NOTIFICATIONS");
-            modelBuilder.Entity<ReportCard>().ToTable("REPORT_CARDS");
             modelBuilder.Entity<Schedule>().ToTable("SCHEDULES");
             modelBuilder.Entity<Student>().ToTable("STUDENTS");
             modelBuilder.Entity<Subject>().ToTable("SUBJECTS");
             modelBuilder.Entity<Teacher>().ToTable("TEACHERS");
 
-            // Khóa ngoại giữa Student và Class
+            // Khóa ngoại giữa Student và Class (không sử dụng navigation property)
             modelBuilder.Entity<Student>()
-                .HasOne(s => s.Class)
-                .WithMany()
+                .HasOne<Class>()   // Chỉ định kiểu Class mà không dùng navigation property
+                .WithMany()        // Không có navigation property ngược lại
                 .HasForeignKey(s => s.ClassId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
             // Khóa ngoại giữa Teacher và Subject
             modelBuilder.Entity<Teacher>()
-                .HasOne(t => t.Subject)
+                .HasOne<Subject>()
                 .WithMany()
                 .HasForeignKey(t => t.SubjectId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Khóa ngoại giữa Class và Teacher (Giáo viên chủ nhiệm)
+            // Cấu hình khóa ngoại giữa Class và Teacher mà không sử dụng navigation property ngược lại:
             modelBuilder.Entity<Class>()
-                .HasOne(c => c.MainTeacher)
-                .WithMany()
+                .HasOne<Teacher>()   // Không chỉ định navigation property
+                .WithMany()          // Không có navigation property ngược lại
                 .HasForeignKey(c => c.MainTeacherId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Khóa ngoại giữa Schedule và các bảng khác
+            // Khóa ngoại giữa Schedule và Class
             modelBuilder.Entity<Schedule>()
-                .HasOne(s => s.Class)
-                .WithMany()
+                .HasOne<Class>()      // Không sử dụng navigation property
+                .WithMany()           // Không có navigation property ngược lại
                 .HasForeignKey(s => s.ClassId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Khóa ngoại giữa Schedule và Subject
             modelBuilder.Entity<Schedule>()
-                .HasOne(s => s.Subject)
-                .WithMany()
+                .HasOne<Subject>()    // Không sử dụng navigation property
+                .WithMany()           // Không có navigation property ngược lại
                 .HasForeignKey(s => s.SubjectId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Khóa ngoại giữa Schedule và Teacher
             modelBuilder.Entity<Schedule>()
-                .HasOne(s => s.Teacher)
-                .WithMany()
+                .HasOne<Teacher>()    // Không sử dụng navigation property
+                .WithMany()           // Không có navigation property ngược lại
                 .HasForeignKey(s => s.TeacherId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Khóa ngoại giữa Grade và các bảng khác
-            modelBuilder.Entity<Grade>()
-                .HasOne(g => g.Student)
-                .WithMany()
-                .HasForeignKey(g => g.StudentId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Grade>()
-                .HasOne(g => g.Subject)
-                .WithMany()
-                .HasForeignKey(g => g.SubjectId)
-                .OnDelete(DeleteBehavior.Cascade);
+            .HasKey(g => g.GradeId);
 
-            // Khóa ngoại giữa ReportCard và các bảng khác
-            modelBuilder.Entity<ReportCard>()
-                .HasOne(r => r.Student)
-                .WithMany()
-                .HasForeignKey(r => r.StudentId)
-                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ReportCard>()
-                .HasOne(r => r.Subject)
-                .WithMany()
-                .HasForeignKey(r => r.SubjectId)
-                .OnDelete(DeleteBehavior.Cascade);
+
 
             // Khóa ngoại giữa Notification và Event
             modelBuilder.Entity<Notification>()
-                .HasOne(n => n.Event)
+                .HasOne<Event>()
                 .WithMany()
                 .HasForeignKey(n => n.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
