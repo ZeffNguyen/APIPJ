@@ -1,5 +1,6 @@
 ﻿using API_PJ.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,11 +33,10 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-// Cấu hình HTTP request pipeline
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API_PJ v1"));
 }
 
 // Bật CORS
@@ -45,9 +45,13 @@ app.UseCors("AllowAll");
 // Bật Authorization
 app.UseAuthorization();
 
-// Đọc PORT từ biến môi trường (Render yêu cầu)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-app.Urls.Add($"http://0.0.0.0:{port}");
+// Cấu hình Kestrel để lắng nghe trên mọi địa chỉ IP
+builder.WebHost.ConfigureKestrel(options =>
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "5000"; // Lấy PORT từ biến môi trường
+    options.ListenAnyIP(int.Parse(port)); // Cho phép lắng nghe trên tất cả địa chỉ IP
+});
+
 
 app.MapControllers();
 
