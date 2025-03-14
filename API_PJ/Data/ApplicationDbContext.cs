@@ -123,7 +123,7 @@ namespace API_PJ.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=mydata;Username=postgres;Password=binh123;");
+                optionsBuilder.UseNpgsql("Host=dpg-cv9qataj1k6c739auti0-a;Port=5432;Database=mydata_xkxe;Username=root;Password=g3MO7YuUplQWGGRujn66X44EpmA4SARQ;");
             }
         }
     }
