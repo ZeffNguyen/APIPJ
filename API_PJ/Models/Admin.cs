@@ -7,20 +7,20 @@
     public class Admin
     {
         [Key]
-        [Column("id")] // Map với tên trong DB
-        public Guid Id { get; set; } = Guid.NewGuid();
+        [Column("admin_id")] // Map với tên trong DB
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid AdminId { get; set; } = Guid.NewGuid();
 
         [Required]
         [MaxLength(255)]
-        [Column("NAME")] // Map với tên trong DB
-        public string? Name { get; set; }
+        [Column("name")] // Đổi về chữ thường để tránh lỗi PostgreSQL
+        public string Name { get; set; }
 
         [Required]
-        [Column("PASS")] // Map với tên trong DB
-        public string? Password { get; set; }
+        [Column("pass")] // Đổi về chữ thường để tránh lỗi PostgreSQL
+        public string Password { get; set; }
 
-        [Column("checkuser")] // Map với tên trong DB
+        [Column("checkuser")] // Không cần đổi
         public bool CheckUser { get; set; }
     }
-
 }

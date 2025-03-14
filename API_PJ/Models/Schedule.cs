@@ -8,10 +8,12 @@
     public class Schedule
     {
         [Key]
-        [Column("schedule_Id")]
+        [Column("schedule_id")] // Đổi thành chữ thường để đồng bộ với PostgreSQL
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid ScheduleId { get; set; } = Guid.NewGuid();
 
         [Column("room")]
+        [MaxLength(50)] // Giới hạn độ dài tối đa 50 ký tự
         public string? Room { get; set; }
 
         [Required]
@@ -23,21 +25,21 @@
         public DateTime EndTime { get; set; }
 
         [Column("detail")]
+        [StringLength(500)] // Giới hạn mô tả tối đa 500 ký tự
         public string? Detail { get; set; }
 
         [Required]
-        [Column("class_Id")]
+        [Column("class_id")]
         public Guid ClassId { get; set; }
 
         [Required]
-        [Column("subject_Id")]
+        [Column("subject_id")]
         public Guid SubjectId { get; set; }
 
         [Required]
-        [Column("teacher_Id")]
+        [Column("teacher_id")]
         public Guid TeacherId { get; set; }
 
-       
+        
     }
-
 }

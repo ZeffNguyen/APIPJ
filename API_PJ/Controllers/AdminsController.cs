@@ -25,14 +25,14 @@ namespace API_PJ.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins()
         {
-            return await _context.Admins.ToListAsync();
+            return await _context.Admin.ToListAsync();
         }
 
         // GET: api/Admins/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Admin>> GetAdmin(Guid id)
         {
-            var admin = await _context.Admins.FindAsync(id);
+            var admin = await _context.Admin.FindAsync(id);
 
             if (admin == null)
             {
@@ -47,7 +47,7 @@ namespace API_PJ.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAdmin(Guid id, Admin admin)
         {
-            if (id != admin.Id)
+            if (id != admin.AdminId)
             {
                 return BadRequest();
             }
@@ -78,23 +78,23 @@ namespace API_PJ.Controllers
         [HttpPost]
         public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
         {
-            _context.Admins.Add(admin);
+            _context.Admin.Add(admin);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAdmin", new { id = admin.Id }, admin);
+            return CreatedAtAction("GetAdmin", new { id = admin.AdminId }, admin);
         }
 
         // DELETE: api/Admins/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAdmin(Guid id)
         {
-            var admin = await _context.Admins.FindAsync(id);
+            var admin = await _context.Admin.FindAsync(id);
             if (admin == null)
             {
                 return NotFound();
             }
 
-            _context.Admins.Remove(admin);
+            _context.Admin.Remove(admin);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -102,7 +102,7 @@ namespace API_PJ.Controllers
 
         private bool AdminExists(Guid id)
         {
-            return _context.Admins.Any(e => e.Id == id);
+            return _context.Admin.Any(e => e.AdminId == id);
         }
     }
 }

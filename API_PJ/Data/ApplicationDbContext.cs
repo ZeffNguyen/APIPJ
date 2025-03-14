@@ -1,5 +1,8 @@
 ﻿using API_PJ.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL; // Thêm dòng này
+
 
 namespace API_PJ.Data
 {
@@ -16,79 +19,112 @@ namespace API_PJ.Data
         public DbSet<Grade> Grades { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Event> Events { get; set; }
-        public DbSet<Admin> Admins { get; set; }
+        public DbSet<Admin> Admin { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Ánh xạ tên bảng chính xác
-            modelBuilder.Entity<Admin>().ToTable("ADMIN");
-            modelBuilder.Entity<Class>().ToTable("CLASSES");
-            modelBuilder.Entity<Event>().ToTable("EVENTS");
-            modelBuilder.Entity<Grade>().ToTable("GRADES");
-            modelBuilder.Entity<Notification>().ToTable("NOTIFICATIONS");
-            modelBuilder.Entity<Schedule>().ToTable("SCHEDULES");
-            modelBuilder.Entity<Student>().ToTable("STUDENTS");
-            modelBuilder.Entity<Subject>().ToTable("SUBJECTS");
-            modelBuilder.Entity<Teacher>().ToTable("TEACHERS");
+            // Đổi tên bảng về chữ thường (PostgreSQL phân biệt hoa thường)
+            modelBuilder.Entity<Admin>().ToTable("admins");
+            modelBuilder.Entity<Class>().ToTable("classes");
+            modelBuilder.Entity<Event>().ToTable("events");
+            modelBuilder.Entity<Grade>().ToTable("grades");
+            modelBuilder.Entity<Notification>().ToTable("notifications");
+            modelBuilder.Entity<Schedule>().ToTable("schedules");
+            modelBuilder.Entity<Student>().ToTable("students");
+            modelBuilder.Entity<Subject>().ToTable("subjects");
+            modelBuilder.Entity<Teacher>().ToTable("teachers");
 
-            // Khóa ngoại giữa Student và Class (không sử dụng navigation property)
+            // Cấu hình khóa chính là GUID
             modelBuilder.Entity<Student>()
-                .HasOne<Class>()   // Chỉ định kiểu Class mà không dùng navigation property
-                .WithMany()        // Không có navigation property ngược lại
+                .Property(s => s.StudentId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            modelBuilder.Entity<Teacher>()
+                .Property(t => t.TeacherId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            modelBuilder.Entity<Subject>()
+                .Property(s => s.SubjectId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            modelBuilder.Entity<Class>()
+                .Property(c => c.ClassId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            modelBuilder.Entity<Schedule>()
+                .Property(s => s.ScheduleId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            modelBuilder.Entity<Grade>()
+                .Property(g => g.GradeId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.NotificationId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            modelBuilder.Entity<Event>()
+                .Property(e => e.EventId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            modelBuilder.Entity<Admin>()
+                .Property(a => a.AdminId)
+                .HasDefaultValueSql("gen_random_uuid()");
+
+            // Ràng buộc khóa ngoại
+            modelBuilder.Entity<Student>()
+                .HasOne<Class>()
+                .WithMany()
                 .HasForeignKey(s => s.ClassId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict); // Tránh lỗi xóa
 
-
-            // Khóa ngoại giữa Teacher và Subject
             modelBuilder.Entity<Teacher>()
                 .HasOne<Subject>()
                 .WithMany()
                 .HasForeignKey(t => t.SubjectId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Cấu hình khóa ngoại giữa Class và Teacher mà không sử dụng navigation property ngược lại:
             modelBuilder.Entity<Class>()
-                .HasOne<Teacher>()   // Không chỉ định navigation property
-                .WithMany()          // Không có navigation property ngược lại
+                .HasOne<Teacher>()
+                .WithMany()
                 .HasForeignKey(c => c.MainTeacherId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Khóa ngoại giữa Schedule và Class
             modelBuilder.Entity<Schedule>()
-                .HasOne<Class>()      // Không sử dụng navigation property
-                .WithMany()           // Không có navigation property ngược lại
+                .HasOne<Class>()
+                .WithMany()
                 .HasForeignKey(s => s.ClassId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Khóa ngoại giữa Schedule và Subject
             modelBuilder.Entity<Schedule>()
-                .HasOne<Subject>()    // Không sử dụng navigation property
-                .WithMany()           // Không có navigation property ngược lại
+                .HasOne<Subject>()
+                .WithMany()
                 .HasForeignKey(s => s.SubjectId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Khóa ngoại giữa Schedule và Teacher
             modelBuilder.Entity<Schedule>()
-                .HasOne<Teacher>()    // Không sử dụng navigation property
-                .WithMany()           // Không có navigation property ngược lại
+                .HasOne<Teacher>()
+                .WithMany()
                 .HasForeignKey(s => s.TeacherId)
-                .OnDelete(DeleteBehavior.Cascade);
-
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Grade>()
-            .HasKey(g => g.GradeId);
+                .HasKey(g => g.GradeId);
 
-
-
-
-            // Khóa ngoại giữa Notification và Event
             modelBuilder.Entity<Notification>()
                 .HasOne<Event>()
                 .WithMany()
                 .HasForeignKey(n => n.EventId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=mydata;Username=postgres;Password=binh123;");
+            }
         }
     }
 }

@@ -7,12 +7,12 @@
     public class Subject
     {
         [Key]
-        [Column("subject_Id")] // Map với tên trong DB
+        [Column("subject_id")] // Đổi thành chữ thường để đồng bộ với PostgreSQL
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid SubjectId { get; set; }
 
-        [Column("subject_name")] // Map với tên trong DB
+        [Required]
+        [Column("subject_name")] // Đổi về chữ thường để tránh lỗi PostgreSQL
         public string? SubjectName { get; set; }
     }
-
-
 }
